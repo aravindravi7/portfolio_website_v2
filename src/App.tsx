@@ -172,20 +172,106 @@ const EducationCard = ({
   </motion.div>
 );
 
-const CertificateBadge = ({ title, issuer }: { title: string, issuer: string }) => (
-  <motion.div 
-    whileHover={{ x: 4, backgroundColor: 'var(--color-surface-container-highest)' }}
-    className="px-3 py-2 bg-surface-container-highest/30 rounded border border-outline-variant/10 flex flex-col justify-center h-14 hover:border-primary-container/30 transition-all duration-300 group cursor-default"
-  >
-    <div className="flex items-start gap-2 mb-0.5">
-      <Award size={12} className="text-primary-container/50 mt-0.5 shrink-0 group-hover:text-primary-container group-hover:scale-110 transition-all" />
-      <span className="text-[10px] font-headline font-bold text-on-surface/80 group-hover:text-on-surface leading-tight transition-colors">{title}</span>
-    </div>
-    <div className="pl-5 text-[8px] font-label text-primary-container/30 group-hover:text-primary-container/60 uppercase tracking-tighter transition-colors">
-      Issued by {issuer}
-    </div>
-  </motion.div>
-);
+const CertificateBadge = ({ title, issuer, link }: { title: string, issuer: string, link?: string }) => {
+  const content = (
+    <>
+      <div className="flex items-start gap-2 mb-0.5">
+        <Award size={12} className="text-primary-container/50 mt-0.5 shrink-0 group-hover:text-primary-container group-hover:scale-110 transition-all" />
+        <span className="text-[10px] font-headline font-bold text-on-surface/80 group-hover:text-on-surface leading-tight transition-colors">{title}</span>
+      </div>
+      <div className="pl-5 text-[8px] font-label text-primary-container/30 group-hover:text-primary-container/60 uppercase tracking-tighter transition-colors">
+        Issued by {issuer}
+      </div>
+    </>
+  );
+
+  const commonProps = {
+    whileHover: { x: 4, backgroundColor: 'var(--color-surface-container-highest)' },
+    className: `px-3 py-2 bg-surface-container-highest/30 rounded border border-outline-variant/10 flex flex-col justify-center h-14 hover:border-primary-container/30 transition-all duration-300 group ${link ? 'cursor-pointer' : 'cursor-default'}`
+  };
+
+  if (link) {
+    return (
+      <motion.a 
+        href={link} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        {...commonProps}
+      >
+        {content}
+      </motion.a>
+    );
+  }
+
+  return (
+    <motion.div {...commonProps}>
+      {content}
+    </motion.div>
+  );
+};
+
+const ProjectCard = ({ 
+  title, 
+  subHeader, 
+  date, 
+  description, 
+  skills, 
+  link 
+}: { 
+  title: string, 
+  subHeader: string, 
+  date?: string, 
+  description: string, 
+  skills: string[], 
+  link?: string 
+}) => {
+  const content = (
+    <>
+      <div className="flex justify-between items-start mb-4">
+        <div className="w-10 h-10 rounded-sm bg-primary-container/10 flex items-center justify-center text-primary-container">
+          <Box size={20} />
+        </div>
+        {date && <span className="font-label text-[9px] text-primary-container/40 uppercase tracking-widest">{date}</span>}
+      </div>
+      <h3 className="font-headline text-xl font-bold mb-1 text-on-surface group-hover:text-primary-container transition-colors">{title}</h3>
+      <p className="font-label text-[10px] text-secondary/60 uppercase tracking-wider mb-4">{subHeader}</p>
+      <p className="font-body text-sm text-on-surface-variant/70 leading-relaxed mb-6 flex-grow">
+        {description}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {skills.map((skill, i) => (
+          <span key={i} className="px-2 py-1 bg-primary-container/5 text-primary-container text-[8px] font-label uppercase tracking-wider rounded-xs border border-primary-container/10">
+            {skill}
+          </span>
+        ))}
+      </div>
+    </>
+  );
+
+  const commonProps = {
+    whileHover: { y: -5 },
+    className: `p-8 bg-surface-container-low/40 border border-primary-container/10 rounded-sm group hover:border-primary-container/30 transition-all duration-300 flex flex-col h-full ${link ? 'cursor-pointer block' : ''}`
+  };
+
+  if (link) {
+    return (
+      <motion.a 
+        href={link} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        {...commonProps}
+      >
+        {content}
+      </motion.a>
+    );
+  }
+
+  return (
+    <motion.div {...commonProps}>
+      {content}
+    </motion.div>
+  );
+};
 
 export default function App() {
   const [activeSection, setActiveSection] = React.useState('hero');
@@ -329,9 +415,9 @@ export default function App() {
             <div className="w-14 h-14 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-container/20 group-hover:border-primary-container/60 transition-all duration-500 shadow-xl">
               <img 
                 alt="Aravind Ravi Profile" 
-                src="https://media.licdn.com/dms/image/v2/D4E03AQG_QvNf9r9X8A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1718228181643?e=1743292800&v=beta&t=7_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8" 
+                src="https://media.licdn.com/dms/image/v2/D4E03AQG_QvNf9r9X8A/profile-displayphoto-shrink_800_800/0/1718228181643?e=1743292800&v=beta&t=7_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8" 
                 referrerPolicy="no-referrer"
-                className="transition-transform duration-700 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
             </div>
             <div>
@@ -445,11 +531,31 @@ export default function App() {
 
             <SidebarSection title="Certificates" icon={Award} containerClassName="flex flex-col gap-2">
               <CertificateBadge title="Introduction to Model Context Protocol" issuer="Anthropic Academy" />
-              <CertificateBadge title="Applying AI Technologies to the Workplace" issuer="Northeastern University" />
-              <CertificateBadge title="PGP in Blockchain" issuer="IIT Kanpur" />
-              <CertificateBadge title="Google Agile Project Management" issuer="Coursera" />
-              <CertificateBadge title="Blockchain Business Models" issuer="Duke University" />
-              <CertificateBadge title="Blockchain Foundations & Use Cases" issuer="Consensys Academy" />
+              <CertificateBadge 
+                title="Applying AI Technologies to the Workplace" 
+                issuer="Northeastern University" 
+                link="https://badgr.com/public/assertions/tfj-OM3WRd2pZhorUb2n1w"
+              />
+              <CertificateBadge 
+                title="PGP in Blockchain" 
+                issuer="IIT Kanpur" 
+                link="https://success.simplilearn.com/9363fd03-5e45-4dfc-899d-58bc118ab995#gs.zbgu2e"
+              />
+              <CertificateBadge 
+                title="Google Agile Project Management" 
+                issuer="Coursera" 
+                link="https://www.coursera.org/account/accomplishments/verify/TBC3H7KB8FN8?utm_source=link&utm_medium=certificate&utm_content=cert_image&utm_campaign=sharing_cta&utm_product=course"
+              />
+              <CertificateBadge 
+                title="Blockchain Business Models" 
+                issuer="Duke University" 
+                link="https://www.coursera.org/account/accomplishments/verify/BEJT6HBHSSGK?utm_source=link&utm_medium=certificate&utm_content=cert_image&utm_campaign=sharing_cta&utm_product=course"
+              />
+              <CertificateBadge 
+                title="Blockchain Foundations & Use Cases" 
+                issuer="Consensys Academy" 
+                link="https://www.coursera.org/account/accomplishments/verify/WRJLKW4NGRK9?utm_source=wa&utm_medium=certificate&utm_content=cert_image&utm_campaign=pdf_header_button&utm_product=course"
+              />
             </SidebarSection>
           </div>
         </div>
@@ -542,7 +648,7 @@ export default function App() {
             <TimelineItem 
               isLatest
               date="01-2024 - 12-2024"
-              title="Technical Product Manager"
+              title="Technical Product Manager (Co-op)"
               company="LG Energy Solution Vertech"
               points={[
                 <>Drove end-to-end product definition for Power Plant Controllers, creating a product framework encompassing standardized features, BRDs and Research, Integration & Testing workflows; built a <span className="text-primary-container font-bold">cost–effort model</span> adopted for scoping a <span className="text-secondary font-bold">$220M project</span> with a MAANG partner.</>,
@@ -610,38 +716,53 @@ export default function App() {
             <div className="h-px flex-1 signal-line"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="p-8 bg-surface-container-low/40 border border-primary-container/10 rounded-sm group hover:border-primary-container/30 transition-all duration-300">
-              <div className="flex justify-between items-start mb-6">
-                <div className="w-10 h-10 rounded-sm bg-primary-container/10 flex items-center justify-center text-primary-container">
-                  <LayoutGrid size={20} />
-                </div>
-                <span className="font-label text-[8px] text-primary-container/40 uppercase tracking-widest">Coming Soon</span>
-              </div>
-              <h3 className="font-headline text-xl font-bold mb-3 text-on-surface group-hover:text-primary-container transition-colors">Project Alpha</h3>
-              <p className="font-body text-sm text-on-surface-variant/70 leading-relaxed mb-6">
-                A technical deep-dive into product architecture and system design. Content currently being curated.
-              </p>
-              <div className="flex gap-2">
-                <span className="px-2 py-1 bg-primary-container/5 text-primary-container text-[8px] font-label uppercase tracking-wider rounded-xs">AI</span>
-                <span className="px-2 py-1 bg-primary-container/5 text-primary-container text-[8px] font-label uppercase tracking-wider rounded-xs">Product</span>
-              </div>
-            </div>
-            <div className="p-8 bg-surface-container-low/40 border border-primary-container/10 rounded-sm group hover:border-primary-container/30 transition-all duration-300">
-              <div className="flex justify-between items-start mb-6">
-                <div className="w-10 h-10 rounded-sm bg-primary-container/10 flex items-center justify-center text-primary-container">
-                  <Terminal size={20} />
-                </div>
-                <span className="font-label text-[8px] text-primary-container/40 uppercase tracking-widest">Coming Soon</span>
-              </div>
-              <h3 className="font-headline text-xl font-bold mb-3 text-on-surface group-hover:text-primary-container transition-colors">Project Beta</h3>
-              <p className="font-body text-sm text-on-surface-variant/70 leading-relaxed mb-6">
-                Exploring the intersection of technical engineering and product management.
-              </p>
-              <div className="flex gap-2">
-                <span className="px-2 py-1 bg-primary-container/5 text-primary-container text-[8px] font-label uppercase tracking-wider rounded-xs">Engineering</span>
-                <span className="px-2 py-1 bg-primary-container/5 text-primary-container text-[8px] font-label uppercase tracking-wider rounded-xs">Strategy</span>
-              </div>
-            </div>
+            <ProjectCard 
+              title="Support Vector Machine vs Neural Network"
+              subHeader="Benchmarking Binary Classifiers on Non-Linear Synthetic Data"
+              date="Feb 2025 – Apr 2025"
+              description="Comparative analysis of SVM and Neural Networks on a non-linearly separable classification task using the CMU StatLib PRNN dataset. Tuned SVM kernel parameters (cost, gamma) and NN architecture (neurons, decay) to push performance from baseline to 100% test accuracy. Backed by confusion matrix metrics, sensitivity/specificity analysis, and decision boundary visualizations."
+              skills={["R", "SVM", "Neural Networks", "Hyperparameter Tuning", "Binary Classification", "Model Evaluation"]}
+              link="https://github.com/aravindravi7/ML_Projects/tree/main/SVM_NN_using_R"
+            />
+            <ProjectCard 
+              title="WorkShip"
+              subHeader="AI-Powered Job Platform Built on Trust, Transparency & Verified Hiring"
+              date="Feb 2025 – Apr 2025"
+              description="Conceptualized and prototyped a hiring platform tackling ghost listings, irrelevant roles, and lack of transparency. Designed end-to-end user journeys for job seekers and recruiters through empathy mapping, competitive analysis, and pain-point identification. Features include verified profiles, real-time updates, and AI-powered job matching to reduce time-to-hire and improve application quality."
+              skills={["Figma", "Moqups", "UI/UX", "Product Design", "User Research", "Empathy Mapping"]}
+              link="https://aravindravi.sites.northeastern.edu/projects/workship-smarter-hiring-zero-noise/"
+            />
+            <ProjectCard 
+              title="Decentralized KYC System"
+              subHeader="Blockchain-Based Identity Verification for Financial Institutions"
+              date="Feb 2022 - Mar 2022"
+              description="Built a decentralized KYC system on Ethereum using Solidity to eliminate redundant identity verification across financial institutions. Features admin-controlled bank governance, on-chain customer data management, and trustless KYC status sharing — enabling banks to rely on existing verified data instead of repeating checks. Deployed and tested via Remix IDE with ethers.js and web3.js."
+              skills={["Solidity", "Ethereum", "Smart Contracts", "Blockchain", "Web3.js", "Ethers.js", "Remix IDE"]}
+              link="https://github.com/aravindravi7/Blockchain-Projects"
+            />
+            <ProjectCard 
+              title="Price Performance Optimizer"
+              subHeader="Java-Based Pricing Intelligence System with Real-Time Analytics"
+              date="Oct 2024 – Nov 2024"
+              description="Built a dynamic pricing management system enabling teams to monitor, analyze, and adjust product prices through real-time performance analysis and simulation. Features role-based access (Customer, Supplier, Admin) and robust reporting for actionable pricing insights. Bridges the gap between market data and pricing strategy for informed decision-making."
+              skills={["Java", "Role-Based Access Control", "Simulation", "Netbeans", "Maven"]}
+              link="https://github.com/aravindravi7/Price-Performance-Optimizer"
+            />
+            <ProjectCard 
+              title="E-Farmer Market"
+              subHeader="SQL-Based OLTP System for Direct Farm-to-Consumer Commerce"
+              date="Oct 2024 – Dec 2024"
+              description="Designed and built an OLTP database application connecting farmers directly with consumers, eliminating middlemen from agricultural supply chains. Implemented stored procedures, triggers, UDFs, and views for automated workflows including stock verification, order processing, and delivery updates. Delivered analytical reports on top-selling products, failed transactions, and category-wise inventory."
+              skills={["SQL", "ERD Modeling", "Database Design", "OLTP", "Oracle Autonomous Database"]}
+            />
+            <ProjectCard 
+              title="Campus Crib"
+              subHeader="Student Accommodation Management System with Ecosystem Architecture"
+              date="Nov 2024 - Dec 2024"
+              description="Built a multi-stakeholder student housing platform using a layered ecosystem model (Network → Enterprise → Organization → Role) supporting residents, building managers, real estate agents, and maintenance crews. Features apartment booking, service/work request management, and integrated maintenance workflows (plumbing, electrical, carpentry, pest control) with role-based dashboards for each stakeholder."
+              skills={["Java", "Java Swing", "OOP", "Ecosystem Architecture", "Role-Based Access", "MVC Pattern"]}
+              link="https://github.com/aravindravi7/Campus-Crib"
+            />
           </div>
         </section>
 
