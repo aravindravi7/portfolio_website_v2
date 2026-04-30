@@ -9,6 +9,7 @@ import {
   Mail, 
   Linkedin,
   Github,
+  Clock,
   Link as LinkIcon, 
   Code, 
   Package, 
@@ -62,26 +63,32 @@ import {
   HeartPulse, 
   ArrowRight, 
   Calendar,
-  Award
+  Award,
+  X
 } from 'lucide-react';
-import { motion, useScroll, useSpring } from 'motion/react';
+import { motion, useScroll, useSpring, AnimatePresence } from 'motion/react';
 
 const SkillBadge = ({ icon: Icon, children }: { icon: any, children: React.ReactNode }) => (
   <motion.span 
-    whileHover={{ scale: 1.05, backgroundColor: 'var(--color-surface-container-highest)', borderColor: 'var(--color-primary-container)' }}
-    className="px-1.5 py-0.5 bg-surface-container-highest/50 rounded text-[8px] font-label text-on-surface-variant border border-outline-variant/10 flex items-center gap-1 cursor-default transition-colors"
+    whileHover={{ 
+      scale: 1.05, 
+      backgroundColor: 'rgba(0, 245, 212, 0.1)', 
+      borderColor: 'var(--color-primary-container)',
+      color: 'var(--color-primary-container)'
+    }}
+    className="px-2 py-1 bg-surface-container-highest/50 rounded text-[10px] font-label text-on-surface-variant border border-outline-variant/10 flex items-center gap-1.5 cursor-default transition-all duration-300"
   >
-    <Icon size={10} className="text-primary-container/70" />
+    <Icon size={12} className="text-primary-container/70 group-hover:text-primary-container" />
     {children}
   </motion.span>
 );
 
 const SidebarSection = ({ title, icon: Icon, children, containerClassName = "flex flex-wrap gap-1" }: { title: string, icon: any, children: React.ReactNode, containerClassName?: string }) => (
   <motion.div 
-    initial={{ opacity: 0, x: -10 }}
-    whileInView={{ opacity: 1, x: 0 }}
+    initial={{ opacity: 0, y: 10 }}
+    whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    transition={{ duration: 0.4 }}
+    transition={{ duration: 0.5, ease: "easeOut" }}
     className="group/section"
   >
     <h4 className="font-label text-[9px] text-primary-container/60 group-hover/section:text-primary-container uppercase tracking-widest mb-2 flex items-center gap-2 transition-colors">
@@ -95,12 +102,16 @@ const SidebarSection = ({ title, icon: Icon, children, containerClassName = "fle
 
 const DomainCard = ({ icon: Icon, title }: { icon: any, title: string }) => (
   <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, ease: "easeOut" }}
     whileHover={{ y: -4, scale: 1.02 }}
     className="px-5 py-3 bg-surface-container border border-primary-container/10 rounded-lg flex items-center gap-3 group hover:border-primary-container/40 transition-all duration-300 shadow-lg shadow-black/20 cursor-pointer relative overflow-hidden"
   >
     <div className="absolute inset-0 bg-primary-container/0 group-hover:bg-primary-container/5 transition-colors"></div>
     <Icon className="text-primary-container/60 group-hover:text-primary-container transition-all group-hover:scale-110" size={20} />
-    <span className="font-headline font-medium text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">{title}</span>
+    <span className="font-headline font-medium text-sm text-on-surface-variant group-hover:text-primary-container transition-colors">{title}</span>
   </motion.div>
 );
 
@@ -148,6 +159,21 @@ const TimelineItem = ({
   </motion.div>
 );
 
+const SignalLine = ({ className = "" }: { className?: string }) => (
+  <div className={`h-px relative overflow-hidden ${className}`}>
+    <div className="absolute inset-0 signal-line opacity-30"></div>
+    <motion.div 
+      animate={{ left: ['-20%', '100%'] }}
+      transition={{ 
+        duration: 8, 
+        repeat: Infinity, 
+        repeatType: "reverse", 
+        ease: "easeInOut" 
+      }}
+      className="absolute inset-y-0 w-32 bg-gradient-to-r from-transparent via-primary-container/60 to-transparent"
+    />
+  </div>
+);
 const EducationCard = ({ 
   type, 
   degree, 
@@ -160,13 +186,17 @@ const EducationCard = ({
   date: string 
 }) => (
   <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, ease: "easeOut" }}
     whileHover={{ y: -5 }}
     className="p-6 bg-surface-container-highest/40 backdrop-blur-sm rounded-lg border border-outline-variant/10 hover:border-primary-container/30 transition-all duration-300 group"
   >
     <p className="font-label text-[10px] text-primary-container/60 group-hover:text-primary-container mb-1 transition-colors uppercase tracking-widest">{type}</p>
     <h4 className="font-headline font-bold text-lg group-hover:text-primary-container transition-colors">{degree}</h4>
     <p className="text-on-surface-variant text-sm mb-4">{school}</p>
-    <div className="flex items-center gap-2 text-[10px] font-label text-secondary/60 group-hover:text-secondary transition-colors">
+    <div className="flex items-center gap-2 text-[10px] font-label text-secondary/60 group-hover:text-primary-container transition-colors">
       <Calendar size={12} /> {date}
     </div>
   </motion.div>
@@ -177,7 +207,7 @@ const CertificateBadge = ({ title, issuer, link }: { title: string, issuer: stri
     <>
       <div className="flex items-start gap-2 mb-0.5">
         <Award size={12} className="text-primary-container/50 mt-0.5 shrink-0 group-hover:text-primary-container group-hover:scale-110 transition-all" />
-        <span className="text-[10px] font-headline font-bold text-on-surface/80 group-hover:text-on-surface leading-tight transition-colors">{title}</span>
+        <span className="text-[10px] font-headline font-bold text-on-surface/80 group-hover:text-primary-container leading-tight transition-colors">{title}</span>
       </div>
       <div className="pl-5 text-[8px] font-label text-primary-container/30 group-hover:text-primary-container/60 uppercase tracking-tighter transition-colors">
         Issued by {issuer}
@@ -186,7 +216,11 @@ const CertificateBadge = ({ title, issuer, link }: { title: string, issuer: stri
   );
 
   const commonProps = {
-    whileHover: { x: 4, backgroundColor: 'var(--color-surface-container-highest)' },
+    initial: { opacity: 0, x: -10 },
+    whileInView: { opacity: 1, x: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.4, ease: "easeOut" },
+    whileHover: { x: 4, backgroundColor: 'rgba(0, 245, 212, 0.05)' },
     className: `px-3 py-2 bg-surface-container-highest/30 rounded border border-outline-variant/10 flex flex-col justify-center h-14 hover:border-primary-container/30 transition-all duration-300 group ${link ? 'cursor-pointer' : 'cursor-default'}`
   };
 
@@ -249,6 +283,10 @@ const ProjectCard = ({
   );
 
   const commonProps = {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6, ease: "easeOut" },
     whileHover: { y: -5 },
     className: `p-8 bg-surface-container-low/40 border border-primary-container/10 rounded-sm group hover:border-primary-container/30 transition-all duration-300 flex flex-col h-full ${link ? 'cursor-pointer block' : ''}`
   };
@@ -273,8 +311,245 @@ const ProjectCard = ({
   );
 };
 
+const RequestCVModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  const [name, setName] = React.useState('');
+  const [company, setCompany] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [isSubmitted, setIsSubmitted] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  // Reset state when modal closes
+  React.useEffect(() => {
+    if (!isOpen) {
+      const timer = setTimeout(() => {
+        setIsSubmitted(false);
+        setIsLoading(false);
+        setError(null);
+        setName('');
+        setCompany('');
+        setEmail('');
+      }, 300); // Wait for exit animation
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/request-cv', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, company, email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send request');
+      }
+
+      console.log('CV Requested successfully:', data);
+      setIsSubmitted(true);
+    } catch (err) {
+      console.error('Error requesting CV:', err);
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="relative w-full max-w-md bg-surface-container border border-primary-container/20 rounded-lg shadow-2xl overflow-hidden"
+          >
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-headline text-xl font-bold text-primary-container">Request CV</h3>
+                <button onClick={onClose} className="text-on-surface/40 hover:text-primary-container transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+              
+              {!isSubmitted ? (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <p className="text-sm text-on-surface-variant/80">
+                    Please provide your details to receive my latest CV.
+                  </p>
+                  
+                  {error && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-xs">
+                      {error}
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    <div>
+                      <label htmlFor="name" className="block text-[10px] font-label text-primary-container/60 uppercase tracking-widest mb-1.5">
+                        Full Name
+                      </label>
+                      <input
+                        required
+                        disabled={isLoading}
+                        type="text"
+                        id="name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="John Doe"
+                        className="w-full bg-surface-container-highest border border-outline-variant/10 rounded px-4 py-2 text-sm focus:outline-none focus:border-primary-container/50 transition-colors disabled:opacity-50"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="company" className="block text-[10px] font-label text-primary-container/60 uppercase tracking-widest mb-1.5">
+                        Company
+                      </label>
+                      <input
+                        required
+                        disabled={isLoading}
+                        type="text"
+                        id="company"
+                        value={company}
+                        onChange={(e) => setCompany(e.target.value)}
+                        placeholder="Company Name"
+                        className="w-full bg-surface-container-highest border border-outline-variant/10 rounded px-4 py-2 text-sm focus:outline-none focus:border-primary-container/50 transition-colors disabled:opacity-50"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-[10px] font-label text-primary-container/60 uppercase tracking-widest mb-1.5">
+                        Email Address
+                      </label>
+                      <input
+                        required
+                        disabled={isLoading}
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="your@email.com"
+                        className="w-full bg-surface-container-highest border border-outline-variant/10 rounded px-4 py-2 text-sm focus:outline-none focus:border-primary-container/50 transition-colors disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: isLoading ? 1 : 1.02 }}
+                    whileTap={{ scale: isLoading ? 1 : 0.98 }}
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-primary-container text-on-primary py-2.5 rounded font-bold uppercase text-[10px] tracking-widest shadow-[0_0_15px_rgba(0,245,212,0.2)] hover:shadow-[0_0_25px_rgba(0,245,212,0.4)] transition-all mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isLoading ? (
+                      <>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          className="w-3 h-3 border-2 border-on-primary/30 border-t-on-primary rounded-full"
+                        />
+                        Sending...
+                      </>
+                    ) : (
+                      'Send Request'
+                    )}
+                  </motion.button>
+                </form>
+              ) : (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="py-4 text-center"
+                >
+                  <div className="w-12 h-12 bg-primary-container/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle2 className="text-primary-container" size={24} />
+                  </div>
+                  <h4 className="font-headline font-bold text-lg mb-2">Request Sent!</h4>
+                  <p className="text-sm text-on-surface-variant/60 mb-6">
+                    Thank you, {name}. I'll send my CV to {email} shortly.
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={onClose}
+                    className="w-full bg-surface-container-highest text-on-surface py-2.5 rounded font-bold uppercase text-[10px] tracking-widest border border-outline-variant/10 hover:border-primary-container/30 transition-all"
+                  >
+                    Close
+                  </motion.button>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+const LiveStatus = () => {
+  const [time, setTime] = React.useState(new Date());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const estOptions: Intl.DateTimeFormatOptions = { 
+    timeZone: "America/New_York",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  };
+  
+  const estString = time.toLocaleString("en-US", estOptions);
+  
+  const hourStr = time.toLocaleString("en-US", { 
+    timeZone: "America/New_York",
+    hour: "numeric", 
+    hour12: false 
+  });
+  const hour = parseInt(hourStr);
+
+  let status = "";
+  if (hour >= 5 && hour < 11) status = "Starting the day ☀️";
+  else if (hour >= 11 && hour < 19) status = "Locked in ☕";
+  else if (hour >= 19 && hour < 23) status = "Wrapping up 🌆";
+  else status = "Winding down 🌙";
+
+  const [timePart, ampm] = estString.split(' ');
+  const [hh, mm] = timePart.split(':');
+
+  return (
+    <div className="space-y-1 cursor-default">
+      <div className="font-label text-[11px] font-medium text-on-surface/90 flex items-center gap-2">
+        {status}
+      </div>
+      <div className="font-label text-[11px] text-on-surface-variant/80">
+        Boston&nbsp;·&nbsp;EST&nbsp;·&nbsp;<span>{hh}</span><span className="blink-colon mx-[1px]">:</span><span>{mm} {ampm}</span>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [activeSection, setActiveSection] = React.useState('hero');
+  const [isRequestModalOpen, setIsRequestModalOpen] = React.useState(false);
   const { scrollYProgress } = useScroll();
 
   React.useEffect(() => {
@@ -315,10 +590,25 @@ export default function App() {
       />
 
       {/* Background Ambient Effects */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary-container/5 rounded-full blur-[150px] -mr-96 -mt-96"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary-container/5 rounded-full blur-[120px] -ml-64 -mb-64"></div>
-        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+      <div className="aurora-container">
+        <div className="aurora-blob aurora-blob-1"></div>
+        <div className="aurora-blob aurora-blob-2"></div>
+        <div className="aurora-blob aurora-blob-3"></div>
+        
+        {/* Subtle Moving Grid Overlay */}
+        <motion.div 
+          animate={{ 
+            backgroundPosition: ['0px 0px', '40px 40px'] 
+          }}
+          transition={{ 
+            duration: 10, 
+            repeat: Infinity, 
+            ease: "linear" 
+          }}
+          className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(var(--color-primary-container)_1px,transparent_1px)] [background-size:40px_40px]"
+        />
+
+        <div className="absolute inset-0 opacity-[0.02] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
       </div>
 
       {/* TopAppBar Navigation */}
@@ -334,32 +624,100 @@ export default function App() {
             {/* Rotating Outer Ring */}
             <motion.div 
               animate={{ rotate: 360 }}
-              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-              className="absolute -inset-1 border border-primary-container/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="absolute -inset-2 border border-primary-container/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"
             />
             
             {/* Main Monogram Container */}
             <div className="w-10 h-10 rounded-sm border border-primary-container/30 flex items-center justify-center bg-surface-container-low/60 backdrop-blur-md group-hover:border-primary-container/80 transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.5)] relative overflow-hidden">
-              {/* Scanning Light Effect */}
+              {/* Glitchy Scanning Light Effect */}
               <motion.div 
-                animate={{ translateY: ['-100%', '200%'] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
-                className="absolute inset-x-0 h-px bg-primary-container/40 blur-[1px] z-10"
+                animate={{ 
+                  translateY: ['-100%', '200%'],
+                  opacity: [0.3, 1, 0.3, 0.8, 0.3]
+                }}
+                transition={{ 
+                  duration: 2.5, 
+                  repeat: Infinity, 
+                  ease: "easeInOut",
+                  times: [0, 0.2, 0.5, 0.8, 1]
+                }}
+                className="absolute inset-x-0 h-[2px] bg-primary-container z-10 shadow-[0_0_15px_rgba(0,245,212,1)]"
               />
               
-              {/* Subtle Grid Background */}
-              <div className="absolute inset-0 opacity-10 bg-[radial-gradient(var(--color-primary-container)_1px,transparent_1px)] [background-size:4px_4px]"></div>
+              {/* Pulsing Grid Background */}
+              <motion.div 
+                animate={{ opacity: [0.05, 0.15, 0.05] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 bg-[radial-gradient(var(--color-primary-container)_1px,transparent_1px)] [background-size:4px_4px]"
+              />
               
-              {/* Corner Accents */}
-              <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-primary-container/60"></div>
-              <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-primary-container/60"></div>
+              {/* Breathing Corner Accents */}
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.8, 0.4] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-primary-container/80"
+              />
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.8, 0.4] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-primary-container/80"
+              />
               
-              <span className="font-headline font-black text-xl text-primary-container tracking-tighter drop-shadow-[0_0_8px_rgba(0,245,212,0.4)] relative z-20">
+              {/* Holographic AR Text */}
+              <motion.span 
+                animate={{ 
+                  opacity: [1, 0.8, 1, 0.9, 1],
+                  textShadow: [
+                    '0 0 8px rgba(0,245,212,0.4)',
+                    '0 0 12px rgba(0,245,212,0.6)',
+                    '0 0 8px rgba(0,245,212,0.4)'
+                  ]
+                }}
+                transition={{ duration: 0.2, repeat: Infinity, repeatType: "mirror" }}
+                className="font-headline font-black text-xl text-primary-container tracking-tighter relative z-20"
+              >
                 AR
-              </span>
+              </motion.span>
             </div>
             
           </motion.div>
+
+          {/* Social Links in Header */}
+          <div className="flex items-center gap-4 ml-10 mr-auto">
+            <motion.a 
+              whileHover={{ scale: 1.1, color: 'var(--color-primary-container)' }}
+              whileTap={{ scale: 0.9 }}
+              className="text-on-surface/40 transition-colors p-1.5 rounded-sm hover:bg-primary-container/5"
+              href="https://www.linkedin.com/in/-aravindravi/"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="LinkedIn"
+            >
+              <Linkedin size={18} />
+            </motion.a>
+            <motion.a 
+              whileHover={{ scale: 1.1, color: 'var(--color-primary-container)' }}
+              whileTap={{ scale: 0.9 }}
+              className="text-on-surface/40 transition-colors p-1.5 rounded-sm hover:bg-primary-container/5"
+              href="https://github.com/aravindravi7"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="GitHub"
+            >
+              <Github size={18} />
+            </motion.a>
+            <motion.a 
+              whileHover={{ scale: 1.1, color: 'var(--color-primary-container)' }}
+              whileTap={{ scale: 0.9 }}
+              className="text-on-surface/40 transition-colors p-1.5 rounded-sm hover:bg-primary-container/5"
+              href="mailto:aravindravi.academics@gmail.com"
+              title="Reach Out"
+            >
+              <Mail size={18} />
+            </motion.a>
+          </div>
+
           <nav className="hidden md:flex gap-8 items-center font-headline tracking-tight uppercase text-[10px]">
             <a 
               className={`pb-1 transition-all ${activeSection === 'experience' ? 'text-primary-container border-b border-primary-container' : 'text-on-surface/40 hover:text-primary-container'}`} 
@@ -386,7 +744,7 @@ export default function App() {
               Writing
             </a>
           </nav>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6 ml-12">
             <motion.button 
               whileHover={{ rotate: 180 }}
               className="text-on-surface/40 hover:text-primary-container transition-colors"
@@ -396,13 +754,19 @@ export default function App() {
             <motion.button 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => setIsRequestModalOpen(true)}
               className="bg-primary-container text-on-primary px-5 py-2 text-[10px] font-bold uppercase rounded-sm shadow-[0_0_15px_rgba(0,245,212,0.2)] hover:shadow-[0_0_25px_rgba(0,245,212,0.4)] transition-all duration-300"
             >
-              Download CV
+              Request CV
             </motion.button>
           </div>
         </div>
       </header>
+
+      <RequestCVModal 
+        isOpen={isRequestModalOpen} 
+        onClose={() => setIsRequestModalOpen(false)} 
+      />
 
       {/* SideNavBar (Desktop Only) */}
       <aside className="fixed left-0 top-0 h-full w-80 z-40 bg-surface-container-low/40 backdrop-blur-xl hidden lg:flex flex-col pt-20 border-r border-primary-container/5">
@@ -414,17 +778,25 @@ export default function App() {
           >
             <div className="w-14 h-14 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-container/20 group-hover:border-primary-container/60 transition-all duration-500 shadow-xl">
               <img 
-                alt="Aravind Ravi Profile" 
-                src="https://media.licdn.com/dms/image/v2/D4E03AQG_QvNf9r9X8A/profile-displayphoto-shrink_800_800/0/1718228181643?e=1743292800&v=beta&t=7_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8_8" 
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
+                alt="Aravind Ravi Professional Profile" 
+                src="data:image/jpeg;base64,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_profile.jpg" 
+                 referrerPolicy="no-referrer"
+                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+               />
             </div>
             <div>
               <h3 className="font-headline font-bold text-sm tracking-tight text-on-surface group-hover:text-primary-container transition-colors duration-300">ARAVIND RAVI</h3>
               <p className="font-label text-[9px] text-primary-container/50 uppercase tracking-widest">Technical Product Manager</p>
             </div>
           </motion.div>
+
+          {/* Living Status Section */}
+          <div className="mt-10">
+            <h4 className="font-label text-[9px] text-primary-container/60 uppercase tracking-widest mb-3 flex items-center gap-2">
+              <Clock size={12} /> Right Now
+            </h4>
+            <LiveStatus />
+          </div>
         </div>
 
         {/* Scrollable Skill Blocks Sidebar */}
@@ -437,21 +809,19 @@ export default function App() {
               <SkillBadge icon={Kanban}>Trello</SkillBadge>
               <SkillBadge icon={ClipboardList}>Asana</SkillBadge>
               <SkillBadge icon={GitBranch}>n8n</SkillBadge>
-              <SkillBadge icon={Heart}>Lovable</SkillBadge>
               <SkillBadge icon={FileText}>FigJam</SkillBadge>
               <SkillBadge icon={Network}>Lucidchart</SkillBadge>
               <SkillBadge icon={PenTool}>Draw.io</SkillBadge>
-              <SkillBadge icon={Users}>Stakeholder Management</SkillBadge>
-              <SkillBadge icon={Rocket}>Release Management</SkillBadge>
               <SkillBadge icon={FileText}>Slab</SkillBadge>
               <SkillBadge icon={Brush}>Miro</SkillBadge>
+              <SkillBadge icon={Users}>Stakeholder Management</SkillBadge>
+              <SkillBadge icon={Rocket}>Release Management</SkillBadge>
             </SidebarSection>
 
             <SidebarSection title="Product & Analytics" icon={BarChart3}>
               <SkillBadge icon={MousePointer2}>Mixpanel</SkillBadge>
               <SkillBadge icon={BarChart}>Power BI</SkillBadge>
               <SkillBadge icon={Activity}>Tableau</SkillBadge>
-              <SkillBadge icon={Database}>BigQuery</SkillBadge>
               <SkillBadge icon={TrendingUp}>Google Analytics</SkillBadge>
               <SkillBadge icon={Eye}>Hotjar</SkillBadge>
               <SkillBadge icon={Palette}>Figma</SkillBadge>
@@ -459,6 +829,9 @@ export default function App() {
               <SkillBadge icon={Terminal}>Replit</SkillBadge>
               <SkillBadge icon={Terminal}>Vercel</SkillBadge>
               <SkillBadge icon={BarChart3}>Looker Studio</SkillBadge>
+              <SkillBadge icon={Heart}>Lovable</SkillBadge>
+              <SkillBadge icon={FileText}>Excel</SkillBadge>
+              <SkillBadge icon={CheckCircle2}>Linear</SkillBadge>
             </SidebarSection>
 
             <SidebarSection title="AI/ML" icon={Cpu}>
@@ -469,13 +842,11 @@ export default function App() {
               <SkillBadge icon={Droplets}>Streamlit</SkillBadge>
               <SkillBadge icon={Network}>RAG Pipelines</SkillBadge>
               <SkillBadge icon={Terminal}>Prompt Engineering</SkillBadge>
-              <SkillBadge icon={ShieldCheck}>AI Evaluation Frameworks</SkillBadge>
               <SkillBadge icon={Terminal}>Claude Code</SkillBadge>
               <SkillBadge icon={Code2}>Google AI Studio</SkillBadge>
               <SkillBadge icon={Network}>GraphRAG</SkillBadge>
               <SkillBadge icon={Users}>Human-in-the-Loop</SkillBadge>
               <SkillBadge icon={Mic}>ASR</SkillBadge>
-              <SkillBadge icon={ShieldCheck}>Evaluation Frameworks</SkillBadge>
               <SkillBadge icon={Layers}>LLM Fine-Tuning</SkillBadge>
             </SidebarSection>
 
@@ -494,6 +865,7 @@ export default function App() {
               <SkillBadge icon={Grid}>Kubernetes</SkillBadge>
               <SkillBadge icon={Monitor}>Docker</SkillBadge>
               <SkillBadge icon={Layout}>Superset</SkillBadge>
+              <SkillBadge icon={Database}>BigQuery</SkillBadge>
             </SidebarSection>
 
             <SidebarSection title="Programming" icon={Code}>
@@ -508,7 +880,7 @@ export default function App() {
               <SkillBadge icon={Coins}>Solidity</SkillBadge>
             </SidebarSection>
 
-            <SidebarSection title="Methodologies" icon={Box}>
+            <SidebarSection title="Frameworks" icon={Box}>
               <SkillBadge icon={Box}>WSJF</SkillBadge>
               <SkillBadge icon={Box}>RICE</SkillBadge>
               <SkillBadge icon={Box}>A/B Testing</SkillBadge>
@@ -516,7 +888,7 @@ export default function App() {
               <SkillBadge icon={Box}>UAT</SkillBadge>
               <SkillBadge icon={Box}>Trade-off Analysis</SkillBadge>
               <SkillBadge icon={Box}>Design Thinking</SkillBadge>
-              <SkillBadge icon={Box}>HDD</SkillBadge>
+              <SkillBadge icon={Box}>Hypothesis Driven Development</SkillBadge>
               <SkillBadge icon={Box}>Business Process Mapping</SkillBadge>
               <SkillBadge icon={Box}>Gap Analysis</SkillBadge>
               <SkillBadge icon={Box}>Effort Impact Analysis</SkillBadge>
@@ -566,67 +938,104 @@ export default function App() {
         {/* Hero / Identity Section */}
         <section className="mb-20 relative" id="hero">
           <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.2
+                }
+              }
+            }}
             className="relative z-10"
           >
-            <div className="flex items-center gap-3 mb-6">
+            <motion.div 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="flex items-center gap-3 mb-6"
+            >
               <div className="h-px w-8 bg-primary-container"></div>
-              <span className="font-label text-[10px] text-primary-container uppercase tracking-[0.4em]">Available for projects</span>
-            </div>
-            <h1 className="text-7xl md:text-9xl font-headline font-bold tracking-tighter text-on-surface leading-[0.85] mb-6">
+              <span className="font-label text-[10px] text-primary-container uppercase tracking-[0.4em]">OPEN TO FULL-TIME PM ROLES</span>
+            </motion.div>
+            <motion.h1 
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="text-7xl md:text-9xl font-headline font-bold tracking-tighter text-on-surface leading-[0.85] mb-6"
+            >
               ARAVIND <br />
               <span className="text-primary-container drop-shadow-[0_0_30px_rgba(0,245,212,0.2)]">RAVI</span>
-            </h1>
-            <p className="font-label text-xs md:text-sm text-primary-container/60 uppercase tracking-[0.5em] mb-10">
+            </motion.h1>
+            <motion.p 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="font-label text-xs md:text-sm text-primary-container/60 uppercase tracking-[0.5em] mb-10"
+            >
               Technical Product Manager // PRODUCT MAVEN
-            </p>
-            <div className="flex flex-wrap gap-3 font-label text-[9px]">
-              <motion.a 
-                whileHover={{ y: -2, color: 'var(--color-primary-container)' }}
-                transition={{ duration: 0.2 }}
-                className="flex items-center gap-2 px-5 py-2.5 bg-surface-container-high/40 border border-outline-variant/10 rounded-sm" 
-                href="mailto:aravindravi.academics@gmail.com"
-              >
-                <Mail size={12} /> Get in touch
-              </motion.a>
-              <motion.a 
-                whileHover={{ y: -2, color: 'var(--color-primary-container)' }}
-                transition={{ duration: 0.2 }}
-                className="flex items-center gap-2 px-5 py-2.5 bg-surface-container-high/40 border border-outline-variant/10 rounded-sm" 
-                href="https://www.linkedin.com/in/-aravindravi/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Linkedin size={12} /> LinkedIn
-              </motion.a>
-              <motion.a 
-                whileHover={{ y: -2, color: 'var(--color-primary-container)' }}
-                transition={{ duration: 0.2 }}
-                className="flex items-center gap-2 px-5 py-2.5 bg-surface-container-high/40 border border-outline-variant/10 rounded-sm" 
-                href="https://github.com/aravindravi7"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Github size={12} /> GitHub
-              </motion.a>
-            </div>
-            <div className="mt-12 max-w-4xl">
-              <p className="font-body text-base md:text-lg text-on-surface-variant/80 leading-relaxed font-light">
-                Technical Product Manager with 5+ years of experience driving 0-to-1 product launches, cloud platform roadmaps, and AI-powered solutions across Energy, Enterprise SaaS, Fintech, Web3, Non-Profit Tech and Research. Proven track record of defining product strategy for $220M-scale programs, architecting data-intensive systems from edge computing to agentic AI platforms and translating complex technical capabilities into measurable business outcomes, including 10x revenue growth, 60%+ efficiency gains and cross-functional delivery across globally distributed teams.
-              </p>
-            </div>
+            </motion.p>
+            <motion.div 
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="mt-12 max-w-4xl"
+            >
+              <div className="space-y-6">
+                <p className="font-headline font-bold text-xl md:text-2xl text-on-surface leading-tight">
+                  I don't just manage products. I architect them, ship them, and move the needle.
+                </p>
+                <p className="font-body text-base md:text-lg text-on-surface-variant/80 leading-relaxed">
+                  <span className="text-secondary font-bold">$220M program scoped. 10x revenue growth. 1M+ lives impacted.</span> 7 years, 7 companies, 10+ products shipped — from grid-scale energy storage to agentic AI platforms to India's first NFT marketplace.
+                </p>
+                <p className="font-body text-base md:text-lg text-on-surface-variant/80 leading-relaxed">
+                  I'm the PM who built an AI agent on a weekend because the pain point couldn't wait. Who analyzed 10M+ rows of battery telemetry to catch contract violations before they became revenue leaks. Who took a lending operation from $190K/month to $1.9M/month and built the team underneath it from scratch.
+                </p>
+                <p className="font-body text-base md:text-lg text-on-surface-variant/80 leading-relaxed">
+                  Energy. AI. Web3. FinTech. HealthTech. Non-Profit Tech. I don't pick comfortable lanes — I pick hard problems with real stakes, bring clarity from ambiguity, and ship outcomes that compound.
+                </p>
+                <p className="font-body text-base md:text-lg text-on-surface-variant/80 leading-relaxed">
+                  Ex-founder. Technical by obsession. Currently at Northeastern, always building.
+                </p>
+              </div>
+            </motion.div>
           </motion.div>
         </section>
 
         {/* Domain Expertise Section */}
         <section className="mb-24">
-          <div className="flex items-center gap-4 mb-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="flex items-center gap-4 mb-10"
+          >
             <h2 className="font-label text-[10px] font-bold text-primary-container uppercase tracking-[0.5em]">Domain Expertise</h2>
-            <div className="h-px flex-1 signal-line opacity-30"></div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <SignalLine className="flex-1" />
+          </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.05
+                }
+              }
+            }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+          >
             <DomainCard icon={Zap} title="Energy & Battery" />
             <DomainCard icon={Coins} title="FinTech" />
             <DomainCard icon={LayoutGrid} title="B2B SaaS" />
@@ -635,16 +1044,36 @@ export default function App() {
             <DomainCard icon={HeartHandshake} title="Non-Profit Tech" />
             <DomainCard icon={Coins} title="Web3" />
             <DomainCard icon={HeartPulse} title="HealthTech" />
-          </div>
+          </motion.div>
         </section>
 
         {/* Professional Experience / Timeline */}
         <section className="mb-32" id="experience">
-          <div className="flex items-center gap-4 mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="flex items-center gap-4 mb-16"
+          >
             <h2 className="font-headline text-3xl font-bold uppercase tracking-widest">PROFESSIONAL History</h2>
-            <div className="h-px flex-1 signal-line"></div>
-          </div>
-          <div className="space-y-20 relative border-l border-primary-container/10 ml-4 pl-12">
+            <SignalLine className="flex-1" />
+          </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.2
+                }
+              }
+            }}
+            className="space-y-20 relative border-l border-primary-container/10 ml-4 pl-12"
+          >
             <TimelineItem 
               isLatest
               date="01-2024 - 12-2024"
@@ -706,16 +1135,44 @@ export default function App() {
                 <>Managed relationships with multi-million-dollar NBFCs and EdTech platforms, aligning stakeholder expectations with product development priorities and ensuring operational-to-technical alignment across the lending pipeline.</>
               ]}
             />
-          </div>
+          </motion.div>
         </section>
 
         {/* Projects Section */}
         <section className="mb-32" id="projects">
-          <div className="flex items-center gap-4 mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="flex items-center gap-4 mb-16"
+          >
             <h2 className="font-headline text-3xl font-bold uppercase tracking-widest">Selected Projects</h2>
-            <div className="h-px flex-1 signal-line"></div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <SignalLine className="flex-1" />
+          </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.2
+                }
+              }
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+          >
+            <ProjectCard 
+              title="SignalScout"
+              subHeader="MULTI AGENT REINFORCEMENT LEARNING SYSTEM FOR AI RESEARCH PRIORITIZATION"
+              date="Jan 2026 - Apr 2026"
+              description="Built an AI research agent for PMs and analysts drowning in arxiv papers. Three evaluators (Skeptic, Scout, Operator) score every paper in parallel on rigor, novelty and shippability. A contextual Thompson Sampling bandit learns which evaluator to trust per user, using a 15-dim feature vector and rank-1 Bayesian updates. Verified sublinear regret in CI: 14× over random baseline across 500 decisions. Full brand system designed alongside the architecture."
+              skills={["PYTHON", "STREAMLIT", "OPENAI APIS", "THOMPSON SAMPLING", "CONTEXTUAL BANDIT", "BAYESIAN INFERENCE", "NUMPY", "SQLITE", "REINFORCEMENT LEARNING"]}
+              link="https://signalscout-831047036020.us-west1.run.app"
+            />
             <ProjectCard 
               title="Support Vector Machine vs Neural Network"
               subHeader="Benchmarking Binary Classifiers on Non-Linear Synthetic Data"
@@ -763,16 +1220,36 @@ export default function App() {
               skills={["Java", "Java Swing", "OOP", "Ecosystem Architecture", "Role-Based Access", "MVC Pattern"]}
               link="https://github.com/aravindravi7/Campus-Crib"
             />
-          </div>
+          </motion.div>
         </section>
 
         {/* Education Section */}
         <section className="mb-20" id="education">
-          <div className="flex items-center gap-4 mb-12">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="flex items-center gap-4 mb-12"
+          >
             <h2 className="font-headline text-3xl font-bold uppercase tracking-widest">academics</h2>
-            <div className="h-px flex-1 signal-line"></div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <SignalLine className="flex-1" />
+          </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.2
+                }
+              }
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+          >
             <EducationCard 
               type="GRADUATE_DEGREE"
               degree="Master of Science in Information Systems"
@@ -785,63 +1262,77 @@ export default function App() {
               school="College of Engineering Trivandrum, KL"
               date="2014 - 2018"
             />
-          </div>
+          </motion.div>
         </section>
 
         {/* Writing Section */}
         <section className="mb-32" id="writing">
-          <div className="flex items-center gap-4 mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="flex items-center gap-4 mb-16"
+          >
             <h2 className="font-headline text-3xl font-bold uppercase tracking-widest">Writing & Insights</h2>
-            <div className="h-px flex-1 signal-line"></div>
-          </div>
+            <SignalLine className="flex-1" />
+          </motion.div>
           <div className="space-y-6">
-            <a 
-              href="https://medium.com/@aravindravi_/switch-from-web2-to-web3-imperative-or-hyped-up-b839c643a69a?postPublishedType=repub"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-6 bg-surface-container-low/20 border-l-2 border-primary-container/20 hover:border-primary-container transition-all duration-300 group cursor-pointer block"
-            >
-              <span className="font-label text-[9px] text-primary-container/40 uppercase tracking-widest mb-2 block">Feb 2023</span>
-              <h3 className="font-headline text-lg font-bold text-on-surface group-hover:text-primary-container transition-colors">Switch from Web2 to Web3: Imperative or hyped-up?</h3>
-              <p className="font-body text-sm text-on-surface-variant/60 mt-2">From convenience to control - a look at how the internet’s power structure is evolving.</p>
-            </a>
-            <a 
-              href="https://medium.com/@aravindravi_/from-abandonment-to-acquisition-transforming-walmarts-cart-experience-d2da623fa51a"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-6 bg-surface-container-low/20 border-l-2 border-primary-container/20 hover:border-primary-container transition-all duration-300 group cursor-pointer block"
-            >
-              <span className="font-label text-[9px] text-primary-container/40 uppercase tracking-widest mb-2 block">Jan 2025</span>
-              <h3 className="font-headline text-lg font-bold text-on-surface group-hover:text-primary-container transition-colors">From Abandonment to Acquisition: Transforming Walmart’s Cart Experience</h3>
-              <p className="font-body text-sm text-on-surface-variant/60 mt-2">Cart abandonment, seen through UX.</p>
-            </a>
-            <a 
-              href="https://glific.org/from-fields-to-forecasts-glific-and-bharat-rohans-synergy/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-6 bg-surface-container-low/20 border-l-2 border-primary-container/20 hover:border-primary-container transition-all duration-300 group cursor-pointer block"
-            >
-              <span className="font-label text-[9px] text-primary-container/40 uppercase tracking-widest mb-2 block">Sep 2025</span>
-              <h3 className="font-headline text-lg font-bold text-on-surface group-hover:text-primary-container transition-colors">From Fields to Forecasts: Glific and Bharat Rohan’s Synergy</h3>
-              <p className="font-body text-sm text-on-surface-variant/60 mt-2">Building scalable communication systems for precision agriculture.</p>
-            </a>
-            <a 
-              href="https://glific.org/project-tech4dev-at-oasis-forging-a-path-for-social-impact/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-6 bg-surface-container-low/20 border-l-2 border-primary-container/20 hover:border-primary-container transition-all duration-300 group cursor-pointer block"
-            >
-              <span className="font-label text-[9px] text-primary-container/40 uppercase tracking-widest mb-2 block">Sep 2023</span>
-              <h3 className="font-headline text-lg font-bold text-on-surface group-hover:text-primary-container transition-colors">Building for Impact: Takeaways from Oasis</h3>
-              <p className="font-body text-sm text-on-surface-variant/60 mt-2">A look at how community-driven tech is shaping real-world social impact.</p>
-            </a>
+            {[
+              {
+                href: "https://medium.com/@aravindravi_/switch-from-web2-to-web3-imperative-or-hyped-up-b839c643a69a?postPublishedType=repub",
+                date: "Feb 2023",
+                title: "Switch from Web2 to Web3: Imperative or hyped-up?",
+                desc: "From convenience to control - a look at how the internet’s power structure is evolving."
+              },
+              {
+                href: "https://medium.com/@aravindravi_/from-abandonment-to-acquisition-transforming-walmarts-cart-experience-d2da623fa51a",
+                date: "Jan 2025",
+                title: "From Abandonment to Acquisition: Transforming Walmart’s Cart Experience",
+                desc: "Cart abandonment, seen through UX."
+              },
+              {
+                href: "https://medium.com/@aravindravi_/the-attention-problem-no-one-talks-about-fcc9548df60d",
+                date: "Apr 2026",
+                title: "The Attention Problem No One Talks About",
+                desc: "When research volume outpaces human judgment, who decides what matters?"
+              },
+              {
+                href: "https://glific.org/from-fields-to-forecasts-glific-and-bharat-rohans-synergy/",
+                date: "Sep 2025",
+                title: "From Fields to Forecasts: Glific and Bharat Rohan’s Synergy",
+                desc: "Building scalable communication systems for precision agriculture."
+              },
+              {
+                href: "https://glific.org/project-tech4dev-at-oasis-forging-a-path-for-social-impact/",
+                date: "Sep 2023",
+                title: "Building for Impact: Takeaways from Oasis",
+                desc: "A look at how community-driven tech is shaping real-world social impact."
+              }
+            ].map((article, index) => (
+              <motion.a 
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+                href={article.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-6 bg-surface-container-low/20 border-l-2 border-primary-container/20 hover:border-primary-container hover:bg-primary-container/5 transition-all duration-300 group cursor-pointer block"
+              >
+                <span className="font-label text-[9px] text-primary-container/40 uppercase tracking-widest mb-2 block group-hover:text-primary-container/60 transition-colors">{article.date}</span>
+                <h3 className="font-headline text-lg font-bold text-on-surface group-hover:text-primary-container transition-colors">{article.title}</h3>
+                <p className="font-body text-sm text-on-surface-variant/60 mt-2 group-hover:text-on-surface-variant transition-colors">{article.desc}</p>
+              </motion.a>
+            ))}
           </div>
         </section>
 
         {/* Footer */}
         <footer className="pt-20 border-t border-primary-container/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="font-label text-[10px] text-primary-container/40 uppercase tracking-widest">
-            © 2026 Aravind Ravi Portfolio // Built for performance
+            © 2026 Aravind Ravi Portfolio
           </div>
           <div className="flex gap-6">
             <a href="https://www.linkedin.com/in/-aravindravi/" target="_blank" rel="noopener noreferrer" className="font-label text-[10px] text-primary-container/40 hover:text-primary-container transition-colors duration-100 uppercase tracking-widest">LinkedIn</a>
